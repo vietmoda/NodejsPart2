@@ -111,13 +111,32 @@ export const loginUserService = ({userName, password}) =>{
 }
 
 export const userRefreshTokenService = (refreshToken) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise(async(resolve, reject)=>{
         try {
-            console.log('token: ', refreshToken);
+            Jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function(err, user) {
+                if(err){
+                    console.error('errr: ', err)
+                    resolve({
+                        status: 'errr',
+                        message: err
+                    })
+                }
+                if(user){
+                    console.log('users: ', user);
+                    const access_token = generalAccessToken({isAdmin: user.isAdmin, _id: user._id})
+                    console.log('access_token: ', access_token);
+                    resolve({
+                        status: 'ok',
+                        data: access_token
+                    })
+                }
+                
+            })
+            // console.log('token: ', refreshToken);
         } catch (error) {
             reject(error)
         }
-    })
+    }).catch(e=>e)
 }
 
 export const getDetailUserService = (id) =>{

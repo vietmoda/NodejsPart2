@@ -41,10 +41,11 @@ export const authStudentMiddelware = (req, res, next) => {
         })
     }
 
-    Jwt.verify(token, 'access token student', function(err, student) {
+    Jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, student) {
         if (err) {
+            console.error('err: ', err)
           return res.status(400).json({
-            status: 'err',
+            status: 'errr',
             message: 'Tài khoản không được cấp quyền hoặc hết thời gian đăng nhập, hãy đăng nhập lại'
           })
         }

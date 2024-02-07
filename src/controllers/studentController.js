@@ -5,7 +5,8 @@ import { createStudentService,
     updateStudentService,
     deleteStudentService,
     getAllStudentService,
-    deleteAllStudentService} from "../services/StudentService.js"
+    deleteAllStudentService,
+    studentRefreshTokenService} from "../services/StudentService.js"
 
 export const studentController = (req, res) =>{
     res.send('hello student')
@@ -13,7 +14,7 @@ export const studentController = (req, res) =>{
 
 export const detailsStudentController = async (req, res) =>{
     const studentId = req.params
-    console.log('studentid', studentId);
+    // console.log('studentid', studentId);
     if(studentId){
         const response = await getDetailStudentService(studentId)
         return res.json(response)
@@ -50,6 +51,28 @@ export const loginStudentController = async (req, res) => {
         return res.json({
             status: 'err',
             Message: 'Hãy điền đầy đủ thông tin đăng nhập'
+        })
+    }
+}
+
+export const studentRefreshTokenController = async (req, res) => {
+    const refresh_token = req.headers
+    const token = refresh_token.token.split(' ')[1]
+    // console.log('token: ', token);
+    try {
+        if(token){
+            const response = studentRefreshTokenService(token)
+            return res.json(response)
+        }else{
+            return res.status(400).json({
+                status: 'err',
+                Message: 'Không có token'
+            })
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status: 'err',
+            Message: error
         })
     }
 }

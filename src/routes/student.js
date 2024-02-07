@@ -7,7 +7,8 @@ import { createStudentController,
         updateStudentController,
         deleteStudentController,
         getAllStudentController,
-        deleteAllStudentController } from '../controllers/studentController.js'
+        deleteAllStudentController,
+        studentRefreshTokenController } from '../controllers/studentController.js'
 import { authStudentMiddelware } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
@@ -27,6 +28,8 @@ router.delete('/deleteMany', deleteAllStudentController)
 router.post('/', createStudentController)
 
 router.post('/login', loginStudentController)
+
+router.post('/refreshToken', studentRefreshTokenController)
 
 router.get('/', studentController)
 export default router

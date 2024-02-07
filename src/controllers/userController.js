@@ -75,7 +75,7 @@ export const userRefreshTokenController = async (req, res) => {
     } catch (error) {
         console.error('err: ', error)
         return res.status(400).json({
-            status: 'err',
+            status: 'errr',
             message: error
         })
     }

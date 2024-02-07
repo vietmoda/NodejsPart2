@@ -54,6 +54,46 @@ export const createStudentService = ({name, studentPassword, birthday, mssv, stu
     })
 }
 
+export const generalAccessToken = (data) => {
+    const access_token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1m'});
+    return access_token
+}
+
+export const generalRefreshToken = (data) => {
+    const refresh_token = jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'365d'});
+    return refresh_token
+}
+
+export const studentRefreshTokenService = (token) => {
+    return new Promise (async(resolve, reject) => {
+        try {
+            jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, function(err, student) {
+                if(err){
+                    resolve({
+                        status: 'err',
+                        message: err
+                    })
+                }
+                if(student){
+                    console.log('student: ', student);
+                    const access_token = generalAccessToken({isAdmin: student.isAdmin, _id: student._id})
+                    console.log(access_token)
+                    resolve({
+                        status: 'ok',
+                        data: access_token
+                    })
+                }
+              });
+        } catch (error) {
+            console.log('lỗi: ', err);
+            reject ({
+                status: 'err',
+                message: err
+            })
+        }
+    })
+}
+
 export const loginStudentService = ({mssv, studentPassword}) => {
     return new Promise (async(resolve, reject) => {
         try{
@@ -61,12 +101,14 @@ export const loginStudentService = ({mssv, studentPassword}) => {
             if(mssvDB.length){
                 const checkPassword = bcrypt.compareSync(studentPassword, mssvDB[0].studentPassword)
                 if(checkPassword){
-                    const access_token = jwt.sign({isAdmin: mssvDB[0].isAdmin, _id: mssvDB[0]._id},'access token student', {expiresIn:'60m'});
+                    const access_token = generalAccessToken({isAdmin: mssvDB[0].isAdmin, _id: mssvDB[0]._id})
+                    const refresh_token = generalRefreshToken({isAdmin: mssvDB[0].isAdmin, _id: mssvDB[0]._id})
                     resolve({
                         status: 'ok',
                         message: 'đăng nhập thành công',
                         data: {
-                            access_token
+                            access_token,
+                            refresh_token
                             // name: mssvDB[0].name,
                             // mssv: mssvDB[0].mssv,
                             // class: mssvDB[0].studentClass
