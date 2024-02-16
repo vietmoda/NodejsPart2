@@ -61,7 +61,7 @@ export const studentRefreshTokenController = async (req, res) => {
     // console.log('token: ', token);
     try {
         if(token){
-            const response = studentRefreshTokenService(token)
+            const response = await studentRefreshTokenService(token)
             return res.json(response)
         }else{
             return res.status(400).json({

@@ -69,15 +69,17 @@ export const studentRefreshTokenService = (token) => {
         try {
             jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, function(err, student) {
                 if(err){
+                    // console.error('errr: ', err)
                     resolve({
                         status: 'err',
                         message: err
                     })
                 }
                 if(student){
+                    console.error('err: ', err)
                     console.log('student: ', student);
                     const access_token = generalAccessToken({isAdmin: student.isAdmin, _id: student._id})
-                    console.log(access_token)
+                    console.log('accesstoken: ' ,access_token)
                     resolve({
                         status: 'ok',
                         data: access_token
@@ -85,13 +87,13 @@ export const studentRefreshTokenService = (token) => {
                 }
               });
         } catch (error) {
-            console.log('lỗi: ', err);
+            console.log('lỗi: ', error);
             reject ({
                 status: 'err',
-                message: err
+                message: error
             })
         }
-    })
+    }).catch(e=>e)
 }
 
 export const loginStudentService = ({mssv, studentPassword}) => {
